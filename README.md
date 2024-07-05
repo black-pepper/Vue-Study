@@ -363,7 +363,7 @@ export default {
   ```html
   <p ref="p">안녕</p>
   ```
-- 마운트된 후 코드를 실행하려면 noudted 옵션 사용
+- 마운트된 후 코드를 실행하려면 moudted 옵션 사용
   ``` javascript
   export default {
     mounted() {
