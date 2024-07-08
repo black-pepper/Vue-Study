@@ -1,5 +1,5 @@
 ## NOTES
-- Vue.js 튜토리얼 정리
+- [Vue.js 튜토리얼 정리](https://github.com/black-pepper/Vue-Study/blob/main/notes/Tutorial.md)
 
 ## PROJECTS
 ### [웹 게임을 만들며 배우는 Vue](https://www.inflearn.com/course/web-game-vue)
