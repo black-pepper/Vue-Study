@@ -12,7 +12,6 @@
         ></PostItem>
       </div>
     </div>
-    <hr class="my-4" />
     <AppCard>
       <PostDetailView :id="1"></PostDetailView>
     </AppCard>
@@ -29,9 +28,18 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const posts = ref([])
+const params = ref({
+  _sort: 'createdAt',
+  _order: 'desc',
+})
 
-const fetchPosts = () => {
-  posts.value = getPosts()
+const fetchPosts = async () => {
+  try {
+    const { data } = await getPosts(params.value)
+    posts.value = data
+  } catch (error) {
+    console.error(error)
+  }
 }
 fetchPosts()
 const goPage = (id) => {

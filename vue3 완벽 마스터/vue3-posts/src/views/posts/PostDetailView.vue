@@ -1,8 +1,8 @@
 <template>
   <div>
-    <h2>{{ form.title }}</h2>
-    <p>{{ form.content }}</p>
-    <p class="text-muted">{{ form.createdAt }}</p>
+    <h2>{{ post.title }}</h2>
+    <p>{{ post.content }}</p>
+    <p class="text-muted">{{ post.createdAt }}</p>
     <hr class="my-4" />
     <div class="row g-2">
       <div class="col-auto">
@@ -19,7 +19,7 @@
         <button class="btn btn-outline-primary" @click="goEditPage">수정</button>
       </div>
       <div class="col-auto">
-        <button class="btn btn-outline-danger">삭제</button>
+        <button class="btn btn-outline-danger" @click="remove">삭제</button>
       </div>
     </div>
   </div>
@@ -27,7 +27,7 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-import { getPostById } from '@/api/posts'
+import { deletePost, getPostById } from '@/api/posts'
 import { ref } from 'vue'
 
 const props = defineProps({
@@ -35,13 +35,32 @@ const props = defineProps({
 })
 
 const router = useRouter()
-const form = ref({})
+const post = ref({})
 
-const fetchPost = () => {
-  const data = getPostById(props.id)
-  form.value = { ...data }
+const fetchPost = async () => {
+  try {
+    const { data } = await getPostById(props.id)
+    setPost(data)
+  } catch (error) {
+    console.error(error)
+  }
 }
+const setPost = (data) => {
+  post.value.title = data.title
+  post.value.content = data.content
+  post.value.createdAt = data.createdAt
+}
+
 fetchPost()
+
+const remove = async () => {
+  try {
+    await deletePost(props.id)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 const goListPage = () => router.push({ name: 'PostList' })
 const goEditPage = () => router.push({ name: 'PostEdit', params: { id: props.id } })
 </script>
