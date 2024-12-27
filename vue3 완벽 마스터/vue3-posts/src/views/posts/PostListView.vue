@@ -11,6 +11,7 @@
           :content="post.content"
           :created-at="post.createdAt"
           @click="goPage(post.id)"
+          @modal="openModal(post)"
         ></PostItem>
       </div>
     </div>
@@ -19,6 +20,14 @@
       :page-count="pageCount"
       @page="(page) => (params._page = page)"
     />
+    <Teleport to="#modal">
+      <PostModal
+        v-model="show"
+        :title="modalTitle"
+        :content="modalContent"
+        :created-at="modalCreatedAt"
+      ></PostModal>
+    </Teleport>
     <hr class="my-5" />
     <AppCard>
       <PostDetailView :id="1"></PostDetailView>
@@ -32,6 +41,7 @@ import PostDetailView from './PostDetailView.vue'
 import AppCard from '@/components/AppCard.vue'
 import AppPagination from '@/components/AppPagination.vue'
 import PostFilter from '@/components/posts/PostFilter.vue'
+import PostModal from '@/components/posts/PostModal.vue'
 import { getPosts } from '@/api/posts'
 import { ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
@@ -67,6 +77,16 @@ const goPage = (id) => {
       id,
     },
   })
+}
+const show = ref(false)
+const modalTitle = ref('')
+const modalContent = ref('')
+const modalCreatedAt = ref('')
+const openModal = ({ title, content, createdAt }) => {
+  show.value = true
+  modalTitle.value = title
+  modalContent.value = content
+  modalCreatedAt.value = createdAt
 }
 </script>
 
