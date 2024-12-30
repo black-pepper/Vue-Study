@@ -16,6 +16,9 @@ import { createPost } from '@/api/posts'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import PostForm from '../../components/posts/PostForm.vue'
+import { useAlert } from '@/coposable/alertjs'
+
+const { vAlert, vSuccess } = useAlert()
 
 const router = useRouter()
 const form = ref({
@@ -28,10 +31,12 @@ const save = () => {
       ...form.value,
       createAt: Date.now(),
     })
+    vSuccess('등록이 완료되었습니다.')
+    router.push({ name: 'PostList' })
   } catch (error) {
     console.error(error)
+    vAlert(error.message)
   }
-  router.push({ name: 'PostList' })
 }
 const goListPage = () => router.push({ name: 'PostList' })
 </script>

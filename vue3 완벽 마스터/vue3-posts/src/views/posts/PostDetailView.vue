@@ -59,6 +59,7 @@ const remove = async () => {
   } catch (error) {
     console.error(error)
   }
+  router.push({ name: 'PostList' })
 }
 
 const goListPage = () => router.push({ name: 'PostList' })

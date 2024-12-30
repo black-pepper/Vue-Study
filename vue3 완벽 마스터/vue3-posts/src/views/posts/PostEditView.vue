@@ -9,7 +9,6 @@
       </template>
     </PostForm>
     <!-- <AppAlert :show="showAlert" :message="alertMessage" :type="alertType" /> -->
-    <AppAlert :items="alerts" />
   </div>
 </template>
 
@@ -18,6 +17,9 @@ import { getPostById, updatePost } from '@/api/posts'
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import PostForm from '../../components/posts/PostForm.vue'
+import { useAlert } from '@/coposable/alertjs'
+
+const { vAlert, vSuccess } = useAlert()
 
 const route = useRoute()
 const router = useRouter()
@@ -44,8 +46,8 @@ fetchPost()
 const edit = async () => {
   try {
     await updatePost(id, { ...form.value })
-    // router.push({ name: 'PostDetail', params: { id } })
-    vAlert('수정이 완료되었습니다.', 'success')
+    vSuccess('수정이 완료되었습니다.')
+    router.push({ name: 'PostDetail', params: { id } })
   } catch (error) {
     console.error(error)
     vAlert(error.message)
@@ -53,25 +55,6 @@ const edit = async () => {
 }
 
 const goDetailPage = () => router.push({ name: 'PostDetail', params: { id } })
-
-// const showAlert = ref(false)
-// const alertMessage = ref('')
-// const alertType = ref('error')
-// const vAlert = (message, type = 'error') => {
-//   showAlert.value = true
-//   alertMessage.value = message
-//   alertType.value = type
-//   setTimeout(() => {
-//     showAlert.value = false
-//   }, 2000)
-// }
-const alerts = ref([])
-const vAlert = (message, type = 'error') => {
-  alerts.value.push({ message, type })
-  setTimeout(() => {
-    alerts.value.shift()
-  }, 2000)
-}
 </script>
 
 <style lang="scss" scoped></style>
