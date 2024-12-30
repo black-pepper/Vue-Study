@@ -20,7 +20,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import AppModal from '../AppModal.vue'
+import AppModal from '../app/AppModal.vue'
 
 const props = defineProps({
   modelValue: Boolean,
