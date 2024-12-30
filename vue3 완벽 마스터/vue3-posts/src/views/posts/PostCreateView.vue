@@ -2,10 +2,22 @@
   <div>
     <h2>게시글 등록</h2>
     <hr class="my-4" />
-    <PostForm v-model:title="form.title" v-model:content="form.content" @submit.prevent="save">
+    <AppError v-if="error" :message="error.message" />
+    <PostForm
+      v-if="visibleForm"
+      v-model:title="form.title"
+      v-model:content="form.content"
+      @submit.prevent="save"
+    >
       <template #actions>
         <button type="button" class="btn btn-outline-dark me-2" @click="goListPage">목록</button>
-        <button class="btn btn-primary">저장</button>
+        <button class="btn btn-primary" :disabled="loading">
+          <template v-if="loading">
+            <span class="spinner-grow spinner-grow-sm" aria-hidden="true"></span>
+            <span class="visually-hidden" role="status">Loading...</span>
+          </template>
+          <template v-else> 저장 </template>
+        </button>
       </template>
     </PostForm>
   </div>
@@ -17,6 +29,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import PostForm from '../../components/posts/PostForm.vue'
 import { useAlert } from '@/coposable/alertjs'
+import AppError from '@/components/app/AppError.vue'
 
 const { vAlert, vSuccess } = useAlert()
 
@@ -25,20 +38,28 @@ const form = ref({
   title: null,
   content: null,
 })
-const save = () => {
+const loading = ref(false)
+const error = ref(null)
+
+const save = async () => {
   try {
-    createPost({
+    loading.value = true
+    await createPost({
       ...form.value,
       createAt: Date.now(),
     })
     vSuccess('등록이 완료되었습니다.')
     router.push({ name: 'PostList' })
-  } catch (error) {
-    console.error(error)
-    vAlert(error.message)
+  } catch (err) {
+    console.error(err)
+    vAlert(err.message)
+    error.value = err
+  } finally {
+    loading.value = false
   }
 }
 const goListPage = () => router.push({ name: 'PostList' })
+const visibleForm = ref(true)
 </script>
 
 <style lang="scss" scoped></style>

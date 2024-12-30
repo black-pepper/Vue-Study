@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
-    "db": "json-server --watch db.json --port 5000"
+    "db": "json-server --watch db.json --port 5000 --delay 1000"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",

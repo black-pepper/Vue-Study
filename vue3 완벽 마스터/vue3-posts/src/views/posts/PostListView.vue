@@ -4,22 +4,26 @@
     <hr class="my-4" />
     <PostFilter v-model:title="params.title_like" v-model:limit="params._limit" />
     <hr class="my-4" />
-    <div class="row g-3">
-      <div v-for="post in posts" :key="post.id" class="col-4">
-        <PostItem
-          :title="post.title"
-          :content="post.content"
-          :created-at="post.createdAt"
-          @click="goPage(post.id)"
-          @modal="openModal(post)"
-        ></PostItem>
-      </div>
-    </div>
-    <AppPagination
-      :current-page="params._page"
-      :page-count="pageCount"
-      @page="(page) => (params._page = page)"
-    />
+    <AppLoading v-if="loading" />
+    <AppError v-else-if="error" :message="error.message" />
+    <template v-else>
+      <AppGrid :items="posts">
+        <template v-slot="{ item }">
+          <PostItem
+            :title="item.title"
+            :content="item.content"
+            :created-at="item.createdAt"
+            @click="goPage(item.id)"
+            @modal="openModal(item)"
+          ></PostItem>
+        </template>
+      </AppGrid>
+      <AppPagination
+        :current-page="params._page"
+        :page-count="pageCount"
+        @page="(page) => (params._page = page)"
+      />
+    </template>
     <Teleport to="#modal">
       <PostModal
         v-model="show"
@@ -44,9 +48,14 @@ import { getPosts } from '@/api/posts'
 import { ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { computed } from 'vue'
+import AppLoading from '@/components/app/AppLoading.vue'
+import AppError from '@/components/app/AppError.vue'
+import AppGrid from '@/components/app/AppGrid.vue'
 
 const router = useRouter()
 const posts = ref([])
+const error = ref(null)
+const loading = ref(false)
 const params = ref({
   _sort: 'createdAt',
   _order: 'desc',
@@ -58,12 +67,15 @@ const totalCount = ref(0)
 const pageCount = computed(() => Math.ceil(totalCount.value / params.value._limit))
 const fetchPosts = async () => {
   try {
+    loading.value = true
     const { data, headers } = await getPosts(params.value)
     posts.value = data
     totalCount.value = headers['x-total-count']
-  } catch (error) {
-    console.error(error)
+  } catch (err) {
+    console.error(err)
+    error.value = err
   }
+  loading.value = false
 }
 watchEffect(fetchPosts)
 // fetchPosts()
