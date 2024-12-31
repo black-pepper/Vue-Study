@@ -36,56 +36,42 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-import { deletePost, getPostById } from '@/api/posts'
-import { ref } from 'vue'
 import AppLoading from '@/components/app/AppLoading.vue'
 import AppError from '@/components/app/AppError.vue'
+import { useAxios } from '@/hooks/useAxios'
 import { useAlert } from '@/coposable/alertjs'
-
-const { vAlert } = useAlert()
 
 const props = defineProps({
   id: [String, Number],
 })
 
 const router = useRouter()
-const post = ref({})
-const error = ref(null)
-const loading = ref(false)
+const { vAlert } = useAlert()
+const { error, loading, data: post } = useAxios(`/posts/${props.id}`)
 
-const fetchPost = async () => {
-  try {
-    loading.value = true
-    const { data } = await getPostById(props.id)
-    setPost(data)
-  } catch (err) {
-    console.error(err)
-    vAlert(err.message)
-    error.value = err
-  } finally {
-    loading.value = false
-  }
-}
-const setPost = (data) => {
-  post.value.title = data.title
-  post.value.content = data.content
-  post.value.createdAt = data.createdAt
-}
-fetchPost()
+const {
+  error: removeError,
+  loading: removeLoading,
+  execute,
+} = useAxios(
+  `/posts/${props.id}`,
+  { method: 'delete' },
+  {
+    immediate: false,
+    onSuccess: () => {
+      router.push({ name: 'PostList' })
+    },
+    onError: (err) => {
+      vAlert(err.message)
+    },
+  },
+)
 
-const removeError = ref(null)
-const removeLoading = ref(false)
 const remove = async () => {
-  try {
-    removeLoading.value = true
-    await deletePost(props.id)
-    router.push({ name: 'PostList' })
-  } catch (err) {
-    console.error(err)
-    removeError.value = err
-  } finally {
-    removeLoading.value = false
+  if (confirm('삭제 하시겠습니까?') === false) {
+    return
   }
+  execute()
 }
 
 const goListPage = () => router.push({ name: 'PostList' })
