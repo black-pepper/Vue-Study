@@ -11,6 +11,7 @@ import globalComponents from './plugins/global-components'
 // import focus from './directives/focus'
 import globalDirectives from './plugins/global-directives'
 import dayjs from './plugins/dayjs'
+import { createPinia } from 'pinia'
 
 const app = createApp(App)
 // app.directive('focus', focus)
@@ -21,4 +22,5 @@ app.use(objPlugins, { name: '짐코딩' })
 app.use(router)
 app.use(person, { name: '홍길동' })
 app.use(dayjs)
+app.use(createPinia())
 app.mount('#app')
