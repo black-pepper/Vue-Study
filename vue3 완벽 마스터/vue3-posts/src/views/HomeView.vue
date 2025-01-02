@@ -8,8 +8,10 @@
       <AppCard>{{ item }}</AppCard>
     </AppGrid>
     <hr class="my-4" />
-    <h2>{{ $person.name }}</h2>
-    <button class="btn btn-primary" @click="person.say">click person</button>
+    <h2>{{ position }}</h2>
+    <h2>x: {{ x }}, y: {{ y }}</h2>
+    <!-- <h2>{{ $person.name }}</h2>
+    <button class="btn btn-primary" @click="person.say">click person</button> -->
   </div>
 </template>
 
@@ -23,7 +25,7 @@ export default {
 </script>
 
 <script setup>
-import { inject, ref } from 'vue'
+import { reactive, ref, toRef, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -33,8 +35,16 @@ const goAboutPage = () => {
 
 const items = ref(['사과', '딸기', '포도', '바나나'])
 
-const person = inject('person')
-console.log('person.name: ', person.name)
+// const person = inject('person')
+// console.log('person.name: ', person.name)
+
+const position = reactive({
+  x: 100,
+  y: 1000,
+})
+// const x = toRef(position, 'x')
+// const y = toRef(position, 'y')
+const { x, y } = toRefs(position)
 </script>
 
 <style lang="scss" scoped></style>
