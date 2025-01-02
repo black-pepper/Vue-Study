@@ -36,7 +36,7 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
+import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from 'vue-router'
 import AppLoading from '@/components/app/AppLoading.vue'
 import AppError from '@/components/app/AppError.vue'
 import { useAxios } from '@/hooks/useAxios'
@@ -82,6 +82,21 @@ const remove = async () => {
 
 const goListPage = () => router.push({ name: 'PostList' })
 const goEditPage = () => router.push({ name: 'PostEdit', params: { id: props.id } })
+
+onBeforeRouteUpdate(() => {
+  //경로변경
+  console.log('onBeforeRouteUpdate')
+})
+onBeforeRouteLeave(() => {
+  console.log('onBeforeRouteLeave')
+})
+</script>
+<script>
+export default {
+  beforeRouteEnter() {
+    console.log('beforeRouteEnter')
+  },
+}
 </script>
 
 <style lang="scss" scoped></style>
